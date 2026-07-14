@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: rain-sense
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_PATH
+        value: ./weather.db
