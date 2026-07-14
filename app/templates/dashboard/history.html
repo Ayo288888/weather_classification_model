@@ -1,0 +1,72 @@
+{% extends "dashboard/base.html" %}
+{% import "_icons.html" as icons %}
+
+{% block title %}Prediction History{% endblock %}
+{% block page_title %}Prediction History{% endblock %}
+
+{% block dashboard_content %}
+{% if pagination.total %}
+<div class="card">
+    <div class="dash-table-wrap">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Prediction</th>
+                    <th>Confidence</th>
+                    <th>Humidity (3pm)</th>
+                    <th>Pressure (9am)</th>
+                    <th>Temp (3pm)</th>
+                    <th>Wind Gust</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table_rows %}
+                <tr>
+                    <td>{{ row.created_at_display }}</td>
+                    <td class="{{ 'prediction-rain' if row.label == 'Rain' else 'prediction-no-rain' }}">{{ row.label }}</td>
+                    <td>{{ row.confidence }}%</td>
+                    <td>{{ row.humidity_3pm }}%</td>
+                    <td>{{ row.pressure_9am }} hPa</td>
+                    <td>{{ row.temp_3pm }}°C</td>
+                    <td>{{ row.wind_gust_speed }} km/h</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <span class="pagination__summary">Page {{ pagination.page }} of {{ pagination.total_pages }} &middot; {{ pagination.total }} prediction{{ "s" if pagination.total != 1 }}</span>
+        <div class="pagination__controls">
+            {% if pagination.has_prev %}
+            <a class="pagination__btn" href="{{ url_for('dashboard.history_page', page=pagination.page - 1) }}">
+                {{ icons.icon_chevron_down(class_="icon pagination__icon pagination__icon--prev") }} Previous
+            </a>
+            {% else %}
+            <span class="pagination__btn is-disabled">
+                {{ icons.icon_chevron_down(class_="icon pagination__icon pagination__icon--prev") }} Previous
+            </span>
+            {% endif %}
+
+            {% if pagination.has_next %}
+            <a class="pagination__btn" href="{{ url_for('dashboard.history_page', page=pagination.page + 1) }}">
+                Next {{ icons.icon_chevron_down(class_="icon pagination__icon pagination__icon--next") }}
+            </a>
+            {% else %}
+            <span class="pagination__btn is-disabled">
+                Next {{ icons.icon_chevron_down(class_="icon pagination__icon pagination__icon--next") }}
+            </span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card dash-placeholder">
+    <div class="feature-icon">{{ icons.icon_history() }}</div>
+    <h2>No Predictions Yet</h2>
+    <p>Once you run a classification, your history will appear here.</p>
+    <a href="{{ url_for('dashboard.classify_page') }}" class="btn btn-primary">Run Your First Classification</a>
+</div>
+{% endif %}
+{% endblock %}

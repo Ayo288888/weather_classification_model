@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% include "_theme_bootstrap.html" %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} — RainSense</title>
+    {% include "_head_assets.html" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% import "_icons.html" as icons %}
+
+    <div class="dash-shell">
+        <button type="button" class="dash-scrim" data-sidebar-scrim aria-label="Close menu" hidden></button>
+
+        <aside class="dash-sidebar" data-sidebar>
+            <div class="dash-sidebar__brand">
+                <a href="{{ url_for('main.index') }}" class="dash-logo">
+                    <span class="dash-logo__mark">{{ icons.icon_weather_rain() }}</span>
+                    <span class="dash-logo__text">RainSense</span>
+                </a>
+                <button type="button" class="icon-btn dash-sidebar__close" data-sidebar-close aria-label="Close menu">
+                    {{ icons.icon_dismiss() }}
+                </button>
+            </div>
+
+            <nav class="dash-nav" aria-label="Dashboard navigation">
+                <a href="{{ url_for('dashboard.index') }}" class="dash-nav__item {{ 'is-active' if request.endpoint == 'dashboard.index' }}">
+                    {{ icons.icon_home() }}<span>Overview</span>
+                </a>
+                <a href="{{ url_for('dashboard.classify_page') }}" class="dash-nav__item {{ 'is-active' if request.endpoint == 'dashboard.classify_page' }}">
+                    {{ icons.icon_flash() }}<span>New Classification</span>
+                </a>
+                <a href="{{ url_for('dashboard.history_page') }}" class="dash-nav__item {{ 'is-active' if request.endpoint == 'dashboard.history_page' }}">
+                    {{ icons.icon_history() }}<span>Prediction History</span>
+                </a>
+                <a href="{{ url_for('dashboard.analytics_page') }}" class="dash-nav__item {{ 'is-active' if request.endpoint == 'dashboard.analytics_page' }}">
+                    {{ icons.icon_data_trending() }}<span>Model Analytics</span>
+                </a>
+                <a href="{{ url_for('dashboard.profile') }}" class="dash-nav__item {{ 'is-active' if request.endpoint == 'dashboard.profile' }}">
+                    {{ icons.icon_person() }}<span>Profile</span>
+                </a>
+            </nav>
+
+            <div class="dash-sidebar__footer">
+                <a href="{{ url_for('main.index') }}" class="dash-nav__item" target="_blank" rel="noopener">
+                    {{ icons.icon_globe() }}<span>Website</span>
+                </a>
+                <button type="button" class="dash-nav__item" data-logout-button>
+                    {{ icons.icon_sign_out() }}<span>Logout</span>
+                </button>
+                <p class="dash-sidebar__copyright">RainSense<br>&copy; {{ current_year }} All Rights Reserved</p>
+            </div>
+        </aside>
+
+        <div class="dash-content">
+            <header class="dash-topbar">
+                <div class="dash-topbar__left">
+                    <button type="button" class="icon-btn dash-topbar__menu" data-sidebar-open aria-label="Open menu">
+                        {{ icons.icon_menu() }}
+                    </button>
+                    <h1 class="dash-topbar__title">{% block page_title %}Dashboard{% endblock %}</h1>
+                </div>
+
+                <div class="dash-topbar__search">
+                    {{ icons.icon_search(class_="icon dash-topbar__search-icon") }}
+                    <input type="search" placeholder="Search something here..." aria-label="Search">
+                </div>
+
+                <div class="dash-topbar__controls">
+                    <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle light and dark theme">
+                        {{ icons.icon_sun(class_="icon icon-sun") }}
+                        {{ icons.icon_moon(class_="icon icon-moon") }}
+                    </button>
+
+                    <div class="dash-topbar__user">
+                        <div class="dash-avatar" title="{{ current_user.fullname }}">{{ current_user.fullname[0] | upper }}</div>
+                        <div class="dash-topbar__user-text">
+                            <span class="dash-topbar__user-name">{{ current_user.fullname }}</span>
+                            <span class="dash-topbar__user-email">{{ current_user.email }}</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="dash-main">
+                {% block dashboard_content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/flash.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/modals.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,104 @@
+{% extends "dashboard/base.html" %}
+{% import "_icons.html" as icons %}
+
+{% block title %}New Classification{% endblock %}
+{% block page_title %}New Classification{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/classify.css') }}">
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="card" data-classify-card>
+    <h3>Weather Readings</h3>
+    <form data-classify-form novalidate>
+        <div class="form-grid">
+            {% for field in fields %}
+            <div class="form-field">
+                <label for="{{ field.name }}">{{ icons[field.icon]() }}{{ field.label }}</label>
+                <div class="select-wrap">
+                    <select id="{{ field.name }}" name="{{ field.name }}">
+                        {% for opt in field.options %}
+                        <option value="{{ opt }}" {{ "selected" if opt == field.default }}>{{ opt }}{{ field.unit }}</option>
+                        {% endfor %}
+                    </select>
+                    {{ icons.icon_chevron_down(class_="icon select-wrap__chevron") }}
+                </div>
+                <p class="field-error" data-field-error="{{ field.name }}"></p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <p class="form-error" data-form-error></p>
+
+        <div class="classify-form__actions">
+            <button type="submit" class="btn btn-primary btn-lg" data-classify-submit>
+                {{ icons.icon_flash() }} Run Classification
+            </button>
+            <button type="button" class="btn btn-ghost" data-reset-defaults>Reset to Defaults</button>
+        </div>
+    </form>
+</div>
+
+<div class="card results-panel" data-results-panel hidden>
+    <div class="verdict-card" data-verdict>
+        <div class="verdict-card__icon">
+            {{ icons.icon_weather_rain(class_="icon icon-rain") }}
+            {{ icons.icon_sun(class_="icon icon-no-rain") }}
+        </div>
+        <div class="verdict-card__text">
+            <h2 data-verdict-title>&nbsp;</h2>
+            <p data-verdict-subtitle>Based on the readings you entered.</p>
+        </div>
+        <div class="gauge">
+            <svg viewBox="0 0 120 120" class="gauge__svg">
+                <circle class="gauge__track" cx="60" cy="60" r="52"></circle>
+                <circle class="gauge__value" cx="60" cy="60" r="52" data-gauge-circle></circle>
+            </svg>
+            <div class="gauge__label">
+                <span data-gauge-number>0</span><span class="gauge__percent">%</span>
+                <small>confidence</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="probability-breakdown">
+        <div class="probability-bar">
+            <div class="probability-bar__label"><span>{{ icons.icon_weather_rain(class_="icon") }}Rain</span><span data-prob-rain-value>0%</span></div>
+            <div class="probability-bar__track"><div class="probability-bar__fill probability-bar__fill--rain" data-prob-rain-fill></div></div>
+        </div>
+        <div class="probability-bar">
+            <div class="probability-bar__label"><span>{{ icons.icon_sun(class_="icon") }}No Rain</span><span data-prob-no-rain-value>0%</span></div>
+            <div class="probability-bar__track"><div class="probability-bar__fill probability-bar__fill--no-rain" data-prob-no-rain-fill></div></div>
+        </div>
+    </div>
+
+    <h3>Feature Contribution Breakdown</h3>
+    <p class="chart-card__subtitle">Ranked by influence on this prediction — how strongly each reading pushed the model toward Rain or No Rain.</p>
+    <div class="breakdown-list" data-breakdown-list></div>
+
+    <div class="results-panel__footer">
+        <div class="save-confirmation" data-save-confirmation hidden>
+            {{ icons.icon_checkmark() }}<span>Saved to your prediction history</span>
+        </div>
+        <button type="button" class="btn btn-ghost" data-new-prediction>New Prediction</button>
+    </div>
+</div>
+
+<template id="breakdown-item-template">
+    <div class="breakdown-item">
+        <div class="breakdown-item__header">
+            <span class="breakdown-item__feature" data-bi-feature></span>
+            <span class="breakdown-item__rank" data-bi-rank></span>
+        </div>
+        <div class="breakdown-item__value" data-bi-value></div>
+        <div class="breakdown-item__bar-track">
+            <div class="breakdown-item__bar-fill" data-bi-bar></div>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/classify.js') }}" defer></script>
+{% endblock %}

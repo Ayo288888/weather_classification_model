@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% import "_icons.html" as icons %}
+
+{% block title %}RainSense — Intelligent Rain Prediction{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="hero" id="hero" data-hero>
+    <div class="hero__slides">
+        <div class="hero__slide is-active" style="background-image:url('{{ url_for('static', filename='img/hero/hero_img1.jpg') }}')"></div>
+        <div class="hero__slide" style="background-image:url('{{ url_for('static', filename='img/hero/hero_img2.jpg') }}')"></div>
+        <div class="hero__slide" style="background-image:url('{{ url_for('static', filename='img/hero/hero_img3.jpg') }}')"></div>
+    </div>
+    <div class="hero__overlay"></div>
+
+    <div class="hero__content container">
+        <h1 class="hero__headline">
+            <span class="hero__line">Intelligent Weather Forecasting,</span>
+            <span class="hero__line">Powered by Machine Learning</span>
+        </h1>
+        <p class="hero__subhead">
+            Built on Mutual Information feature selection and Gaussian Naive Bayes classification,
+            trained on a decade of historical weather observations.
+        </p>
+        <div class="hero__actions">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary btn-lg">
+                Get a Forecast {{ icons.icon_arrow_right() }}
+            </a>
+            {% else %}
+            <button type="button" class="btn btn-primary btn-lg" data-modal-target="register">
+                Get a Forecast {{ icons.icon_arrow_right() }}
+            </button>
+            {% endif %}
+            <a href="#how-it-works" class="btn btn-ghost btn-lg btn-hero-ghost" data-scroll-link>Learn How It Works</a>
+        </div>
+    </div>
+
+    <div class="hero__dots" role="tablist" aria-label="Hero background slides">
+        <button class="hero__dot is-active" type="button" data-slide-index="0" aria-label="Show slide 1" role="tab" aria-selected="true"></button>
+        <button class="hero__dot" type="button" data-slide-index="1" aria-label="Show slide 2" role="tab" aria-selected="false"></button>
+        <button class="hero__dot" type="button" data-slide-index="2" aria-label="Show slide 3" role="tab" aria-selected="false"></button>
+    </div>
+</section>
+
+<section class="section" id="about">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>About the System</h2>
+            <p>A machine-learning approach to next-day rain prediction, built end-to-end for a BSc research project.</p>
+        </div>
+        <div class="grid-3 reveal">
+            <div class="card reveal-child">
+                <h3>What It Does</h3>
+                <p>The system ranks candidate weather variables by Mutual Information, keeps the ten most predictive of next-day rainfall, and feeds them into a Gaussian Naive Bayes classifier that returns a Rain / No Rain forecast with a calibrated confidence score.</p>
+            </div>
+            <div class="card reveal-child">
+                <h3>The Dataset</h3>
+                <p>Trained on the weatherAUS dataset — over 145,000 daily observations collected from Australian Bureau of Meteorology weather stations, spanning humidity, temperature, pressure, and wind measurements across roughly a decade.</p>
+            </div>
+            <div class="card reveal-child">
+                <h3>Research Context</h3>
+                <p>Developed to investigate whether Mutual-Information-guided feature selection can improve the efficiency and interpretability of Naive Bayes weather classification, compared to using every available variable.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt" id="how-it-works">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>How It Works</h2>
+            <p>From raw weather data to a confident forecast — five stages, working together in real time.</p>
+        </div>
+        <div class="pipeline-slider reveal" data-pipeline-slider>
+            <div class="pipeline-slider__viewport">
+                <div class="pipeline-step is-active">
+                    <div class="pipeline-step__icon">{{ icons.icon_cloud_arrow_down() }}</div>
+                    <div class="pipeline-step__index">01</div>
+                    <h3>Data Acquisition</h3>
+                    <p>Historical daily weather observations are sourced from the Australian Bureau of Meteorology archive.</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-step__icon">{{ icons.icon_broom() }}</div>
+                    <div class="pipeline-step__index">02</div>
+                    <h3>Preprocessing</h3>
+                    <p>Missing values are imputed, categorical variables encoded, and class imbalance corrected using SMOTE.</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-step__icon">{{ icons.icon_filter() }}</div>
+                    <div class="pipeline-step__index">03</div>
+                    <h3>Mutual Information Feature Selection</h3>
+                    <p>Every candidate feature is ranked by how much it reduces uncertainty about tomorrow's rainfall; the top 10 are kept.</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-step__icon">{{ icons.icon_brain_circuit() }}</div>
+                    <div class="pipeline-step__index">04</div>
+                    <h3>Naive Bayes Training</h3>
+                    <p>A Gaussian Naive Bayes classifier learns the mean and variance of each selected feature, per class.</p>
+                </div>
+                <div class="pipeline-step">
+                    <div class="pipeline-step__icon">{{ icons.icon_target() }}</div>
+                    <div class="pipeline-step__index">05</div>
+                    <h3>Prediction</h3>
+                    <p>New readings are scored against both class distributions, producing a label with a calibrated probability.</p>
+                </div>
+            </div>
+            <div class="pipeline-slider__dots" role="tablist" aria-label="Pipeline stages">
+                <button class="pipeline-slider__dot is-active" type="button" data-slide-index="0" aria-label="Show stage 1" role="tab" aria-selected="true"></button>
+                <button class="pipeline-slider__dot" type="button" data-slide-index="1" aria-label="Show stage 2" role="tab" aria-selected="false"></button>
+                <button class="pipeline-slider__dot" type="button" data-slide-index="2" aria-label="Show stage 3" role="tab" aria-selected="false"></button>
+                <button class="pipeline-slider__dot" type="button" data-slide-index="3" aria-label="Show stage 4" role="tab" aria-selected="false"></button>
+                <button class="pipeline-slider__dot" type="button" data-slide-index="4" aria-label="Show stage 5" role="tab" aria-selected="false"></button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="features">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Key Features</h2>
+            <p>Everything needed to go from a raw reading to a transparent, trustworthy forecast.</p>
+        </div>
+        <div class="grid-3 reveal">
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_flash() }}</div>
+                <h3>Real-Time Classification</h3>
+                <p>Submit current weather readings and receive an instant Rain / No Rain forecast.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_data_bar_horizontal() }}</div>
+                <h3>Feature-Importance Transparency</h3>
+                <p>Every prediction is broken down feature-by-feature, showing exactly how each reading influenced the model's decision.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_history() }}</div>
+                <h3>Prediction History</h3>
+                <p>Every forecast you run is saved to your account so you can review past predictions.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_data_trending() }}</div>
+                <h3>Analytics Dashboard</h3>
+                <p>Explore the model's evaluation metrics, Mutual Information rankings, and confusion matrix.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_shield_checkmark() }}</div>
+                <h3>Secure Accounts</h3>
+                <p>Passwords are hashed with Werkzeug, and every account is scoped to its own prediction history.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_moon() }}</div>
+                <h3>Light &amp; Dark Themes</h3>
+                <p>A full design system with light and dark modes, plus a choice of three accent colors.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt" id="science">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>The Science</h2>
+            <p>The two ideas the entire system is built on, explained in plain language.</p>
+        </div>
+        <div class="grid-2 reveal">
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_data_scatter() }}</div>
+                <h3>Mutual Information</h3>
+                <p>Mutual Information measures how much knowing one variable reduces uncertainty about another. In plain terms: it asks "if I know today's humidity, how much better can I guess tomorrow's rain?" Features that answer that question well score higher and are kept; the rest are dropped.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_math_formula() }}</div>
+                <h3>Gaussian Naive Bayes</h3>
+                <p>Naive Bayes classifies by comparing probabilities: for each class, it assumes every feature follows its own bell-curve (Gaussian) distribution, then combines how likely the observed readings are under each class. "Naive" refers to the simplifying assumption that features are independent given the class — a trade-off that keeps the model fast and surprisingly effective.</p>
+            </div>
+        </div>
+
+        <div class="metrics-grid reveal">
+            <div class="metric-tile reveal-child">
+                <div class="metric-tile__value" data-counter data-value="{{ (metrics.accuracy * 100) | round(2) }}">0</div>
+                <div class="metric-tile__label">Accuracy</div>
+            </div>
+            <div class="metric-tile reveal-child">
+                <div class="metric-tile__value" data-counter data-value="{{ (metrics.precision * 100) | round(2) }}">0</div>
+                <div class="metric-tile__label">Precision</div>
+            </div>
+            <div class="metric-tile reveal-child">
+                <div class="metric-tile__value" data-counter data-value="{{ (metrics.recall * 100) | round(2) }}">0</div>
+                <div class="metric-tile__label">Recall</div>
+            </div>
+            <div class="metric-tile reveal-child">
+                <div class="metric-tile__value" data-counter data-value="{{ (metrics.f1_score * 100) | round(2) }}">0</div>
+                <div class="metric-tile__label">F1 Score</div>
+            </div>
+            <div class="metric-tile reveal-child">
+                <div class="metric-tile__value" data-counter data-value="{{ (metrics.auc_roc * 100) | round(2) }}">0</div>
+                <div class="metric-tile__label">AUC&#8209;ROC</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="importance">
+    <div class="container">
+        <div class="section-header reveal">
+            <h2>Why Weather Prediction Matters</h2>
+            <p>Accurate forecasting touches nearly every part of daily life, industry, and public safety.</p>
+        </div>
+        <div class="grid-3 reveal">
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_drop() }}</div>
+                <h3>Agriculture &amp; Food Security</h3>
+                <p>Farmers rely on accurate rainfall forecasts to time planting, irrigation, and harvesting — reducing crop losses and improving yields season after season.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_shield_checkmark() }}</div>
+                <h3>Disaster Preparedness</h3>
+                <p>Early warning of severe weather gives communities and emergency services the lead time needed to evacuate, secure property, and save lives before storms hit.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_sun() }}</div>
+                <h3>Daily Life &amp; Planning</h3>
+                <p>From commuting to scheduling outdoor events, knowing whether rain is coming shapes millions of everyday decisions.</p>
+            </div>
+            <div class="card reveal-child">
+                <div class="feature-icon">{{ icons.icon_data_trending() }}</div>
+                <h3>Economic Impact</h3>
+                <p>Industries from construction to energy and retail plan around weather patterns — accurate forecasts reduce costly disruptions and improve resource allocation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="container footer__inner">
+        <div class="footer__brand">
+            <p class="footer__title">RainSense</p>
+            <p class="footer__tagline">Mutual Information Feature Selection &amp; Gaussian Naive Bayes Classification</p>
+        </div>
+        <nav class="footer__links" aria-label="Footer">
+            <a href="#about">About</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#features">Features</a>
+            <a href="#science">The Science</a>
+            <a href="#importance">Why It Matters</a>
+        </nav>
+    </div>
+    <p class="footer__copyright">&copy; <span data-current-year></span> RainSense — BSc Research Project.</p>
+</footer>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/landing.js') }}" defer></script>
+{% endblock %}

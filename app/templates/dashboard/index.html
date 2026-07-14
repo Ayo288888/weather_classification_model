@@ -1,0 +1,169 @@
+{% extends "dashboard/base.html" %}
+{% import "_icons.html" as icons %}
+
+{% block title %}Overview{% endblock %}
+{% block page_title %}Overview{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-main__header">
+    <p>Welcome back, {{ current_user.fullname }}. Here's your forecasting activity at a glance.</p>
+</div>
+
+<div class="stat-grid">
+    <div class="card stat-card stat-card--purple">
+        <div class="stat-card__icon">{{ icons.icon_data_bar_horizontal() }}</div>
+        <div>
+            <div class="stat-card__value" data-stat-counter data-value="{{ overview.total }}">0</div>
+            <div class="stat-card__label">Total Predictions</div>
+        </div>
+    </div>
+    <div class="card stat-card stat-card--blue">
+        <div class="stat-card__icon">{{ icons.icon_weather_rain() }}</div>
+        <div>
+            <div class="stat-card__value" data-stat-counter data-value="{{ overview.rain_count }}">0</div>
+            <div class="stat-card__label">Rain Predicted</div>
+        </div>
+    </div>
+    <div class="card stat-card stat-card--green">
+        <div class="stat-card__icon">{{ icons.icon_sun() }}</div>
+        <div>
+            <div class="stat-card__value" data-stat-counter data-value="{{ overview.no_rain_count }}">0</div>
+            <div class="stat-card__label">No Rain Predicted</div>
+        </div>
+    </div>
+    <div class="card stat-card stat-card--lime">
+        <div class="stat-card__icon">{{ icons.icon_target() }}</div>
+        <div>
+            <div class="stat-card__value" data-suffix="%" data-stat-counter data-decimals="1" data-value="{{ overview.avg_confidence }}">0</div>
+            <div class="stat-card__label">Average Confidence</div>
+        </div>
+    </div>
+</div>
+
+<div class="dash-overview-grid">
+    <div class="dash-overview-col">
+        <div class="card profile-card">
+            <div class="profile-card__avatar">{{ current_user.fullname[0] | upper }}</div>
+            <h3 class="profile-card__name">{{ current_user.fullname }}</h3>
+            <p class="profile-card__email">{{ current_user.email }}</p>
+            <div class="profile-card__rings">
+                <div class="ring">
+                    <div class="ring__circle ring--purple" style="--pct: {{ overview.rain_pct }};">
+                        <span class="ring__value">{{ overview.rain_pct }}%</span>
+                    </div>
+                    <span class="ring__label">Rain</span>
+                </div>
+                <div class="ring">
+                    <div class="ring__circle ring--green" style="--pct: {{ overview.no_rain_pct }};">
+                        <span class="ring__value">{{ overview.no_rain_pct }}%</span>
+                    </div>
+                    <span class="ring__label">No Rain</span>
+                </div>
+                <div class="ring">
+                    <div class="ring__circle ring--blue" style="--pct: {{ overview.avg_confidence }};">
+                        <span class="ring__value">{{ overview.avg_confidence }}%</span>
+                    </div>
+                    <span class="ring__label">Confidence</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Recent Activity</h3>
+            {% if overview.recent %}
+            <div class="activity-list">
+                {% for row in overview.recent %}
+                <div class="activity-item {{ 'activity-item--no-rain' if row.label == 'No Rain' }}">
+                    <div class="activity-item__icon">
+                        {% if row.label == 'Rain' %}{{ icons.icon_weather_rain() }}{% else %}{{ icons.icon_sun() }}{% endif %}
+                    </div>
+                    <div class="activity-item__text">
+                        You predicted <strong>{{ row.label }}</strong> with {{ row.confidence }}% confidence
+                        <span class="activity-item__time">{{ row.created_at_display }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="dash-empty">No activity yet. <a href="{{ url_for('dashboard.classify_page') }}">Run your first classification</a>.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="dash-overview-col">
+        <div class="card chart-card">
+            <h3>Prediction Trends</h3>
+            <p class="chart-card__subtitle">Rain vs No Rain predictions over time.</p>
+            {% if overview.total %}
+            <div class="chart-canvas-wrap">
+                <canvas id="chart-trends"></canvas>
+            </div>
+            {% else %}
+            <p class="dash-empty">No predictions yet. <a href="{{ url_for('dashboard.classify_page') }}">Run your first classification</a> to see this chart.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <h3>Top Predictive Features</h3>
+            <p class="chart-card__subtitle">The readings that influence the model's forecast the most.</p>
+            <div class="feature-cards">
+                {% for feature in overview.top_features %}
+                <div class="card feature-card">
+                    <div class="feature-card__icon">{{ icons[feature.icon]() }}</div>
+                    <div class="feature-card__rank">Rank #{{ loop.index }} of 10</div>
+                    <h4 class="feature-card__title">{{ feature.label }}</h4>
+                    <span class="feature-card__score">{{ "%.3f" | format(feature.mi_score) }}</span>
+                    <span class="feature-card__score-label">MI Score</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Weather Snapshot</h3>
+    <p class="chart-card__subtitle">Average conditions across everything you've forecasted.</p>
+    {% if overview.total %}
+    <div class="metric-tiles">
+        <div class="metric-tile metric-tile--purple">
+            <div class="metric-tile__icon">{{ icons.icon_drop() }}</div>
+            <div>
+                <div class="metric-tile__value">{{ overview.snapshot.avg_humidity_3pm }}%</div>
+                <div class="metric-tile__label">Avg Humidity (3pm)</div>
+            </div>
+        </div>
+        <div class="metric-tile metric-tile--blue">
+            <div class="metric-tile__icon">{{ icons.icon_gauge() }}</div>
+            <div>
+                <div class="metric-tile__value">{{ overview.snapshot.avg_pressure_9am }}</div>
+                <div class="metric-tile__label">Avg Pressure (9am, hPa)</div>
+            </div>
+        </div>
+        <div class="metric-tile metric-tile--green">
+            <div class="metric-tile__icon">{{ icons.icon_temperature() }}</div>
+            <div>
+                <div class="metric-tile__value">{{ overview.snapshot.avg_max_temp }}&deg;C</div>
+                <div class="metric-tile__label">Avg Max Temp</div>
+            </div>
+        </div>
+        <div class="metric-tile metric-tile--lime">
+            <div class="metric-tile__icon">{{ icons.icon_weather_squalls() }}</div>
+            <div>
+                <div class="metric-tile__value">{{ overview.snapshot.avg_wind_gust }}</div>
+                <div class="metric-tile__label">Avg Wind Gust (km/h)</div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p class="dash-empty">No predictions yet. <a href="{{ url_for('dashboard.classify_page') }}">Run your first classification</a> to see your averages.</p>
+    {% endif %}
+</div>
+
+<script id="overview-data" type="application/json">{{ overview | tojson }}</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard-overview.js') }}" defer></script>
+{% endblock %}

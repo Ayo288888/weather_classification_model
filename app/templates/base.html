@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% include "_theme_bootstrap.html" %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RainSense{% endblock %}</title>
+    {% include "_head_assets.html" %}
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% import "_icons.html" as icons %}
+
+    <header class="site-header" data-site-header>
+        <div class="site-header__inner">
+            <a class="brand" href="{{ url_for('main.index') }}">
+                <span class="brand__mark">{{ icons.icon_weather_rain() }}</span>
+                <span class="brand__text">RainSense</span>
+            </a>
+
+            <button type="button" class="icon-btn hamburger-btn" data-nav-toggle aria-label="Toggle navigation menu" aria-expanded="false">
+                {{ icons.icon_menu() }}
+            </button>
+
+            <div class="header-panel" data-nav-links>
+                <ul class="nav-links">
+                    <li><a href="{{ url_for('main.index') }}#about">About</a></li>
+                    <li><a href="{{ url_for('main.index') }}#how-it-works">How It Works</a></li>
+                    <li><a href="{{ url_for('main.index') }}#features">Features</a></li>
+                    <li><a href="{{ url_for('main.index') }}#science">The Science</a></li>
+                    <li><a href="{{ url_for('main.index') }}#importance">Why It Matters</a></li>
+                    {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+                    {% endif %}
+                </ul>
+
+                <div class="header-controls">
+                    <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle light and dark theme">
+                        {{ icons.icon_sun(class_="icon icon-sun") }}
+                        {{ icons.icon_moon(class_="icon icon-moon") }}
+                    </button>
+
+                    {% if current_user.is_authenticated %}
+                    <span class="header-user">{{ current_user.fullname }}</span>
+                    <button type="button" class="btn btn-ghost" data-logout-button>Log out</button>
+                    {% else %}
+                    <button type="button" class="btn btn-ghost" data-modal-target="login">Log in</button>
+                    <button type="button" class="btn btn-primary" data-modal-target="register">Register</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {% if not current_user.is_authenticated %}
+    <div class="modal-overlay" data-modal="login" hidden>
+        <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+            <button type="button" class="icon-btn modal-close" data-modal-close aria-label="Close dialog">
+                {{ icons.icon_dismiss() }}
+            </button>
+            <h2 id="login-modal-title">Log in</h2>
+            <p class="modal-subtitle">Welcome back. Enter your details to continue.</p>
+            <form data-auth-form="login" novalidate>
+                <div class="form-field">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="email" autocomplete="email" required>
+                    <p class="field-error" data-field-error="email"></p>
+                </div>
+                <div class="form-field">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" autocomplete="current-password" required>
+                    <p class="field-error" data-field-error="password"></p>
+                </div>
+                <div class="form-field form-field--checkbox">
+                    <label for="login-remember">
+                        <input type="checkbox" id="login-remember" name="remember" value="true">
+                        Remember me
+                    </label>
+                </div>
+                <p class="form-error" data-form-error></p>
+                <button type="submit" class="btn btn-primary modal-submit">Log in</button>
+            </form>
+            <p class="modal-switch">Don't have an account? <button type="button" data-modal-switch="register">Register</button></p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" data-modal="register" hidden>
+        <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="register-modal-title">
+            <button type="button" class="icon-btn modal-close" data-modal-close aria-label="Close dialog">
+                {{ icons.icon_dismiss() }}
+            </button>
+            <h2 id="register-modal-title">Create your account</h2>
+            <p class="modal-subtitle">Get instant Naive Bayes weather forecasts.</p>
+            <form data-auth-form="register" novalidate>
+                <div class="form-field">
+                    <label for="register-fullname">Full name</label>
+                    <input type="text" id="register-fullname" name="fullname" autocomplete="name" required>
+                    <p class="field-error" data-field-error="fullname"></p>
+                </div>
+                <div class="form-field">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="email" autocomplete="email" required>
+                    <p class="field-error" data-field-error="email"></p>
+                </div>
+                <div class="form-field">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="password" autocomplete="new-password" required>
+                    <p class="field-error" data-field-error="password"></p>
+                </div>
+                <div class="form-field">
+                    <label for="register-confirm-password">Confirm password</label>
+                    <input type="password" id="register-confirm-password" name="confirm_password" autocomplete="new-password" required>
+                    <p class="field-error" data-field-error="confirm_password"></p>
+                </div>
+                <p class="form-error" data-form-error></p>
+                <button type="submit" class="btn btn-primary modal-submit">Create account</button>
+            </form>
+            <p class="modal-switch">Already have an account? <button type="button" data-modal-switch="login">Log in</button></p>
+        </div>
+    </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <script src="{{ url_for('static', filename='js/theme.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/flash.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/modals.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

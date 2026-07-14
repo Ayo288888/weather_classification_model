@@ -1,0 +1,66 @@
+{% extends "dashboard/base.html" %}
+{% import "_icons.html" as icons %}
+
+{% block title %}Profile{% endblock %}
+{% block page_title %}Profile{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-main__header">
+    <p>Manage your account details and password.</p>
+</div>
+
+<div class="card profile-header-card">
+    <div class="profile-card__avatar">{{ current_user.fullname[0] | upper }}</div>
+    <div>
+        <h3 class="profile-header-card__name">{{ current_user.fullname }}</h3>
+        <p class="profile-header-card__email">{{ current_user.email }}</p>
+    </div>
+</div>
+
+<div class="profile-grid">
+    <div class="card">
+        <h3>Account Details</h3>
+        <form data-profile-form novalidate>
+            <div class="form-field">
+                <label for="profile-fullname">Full name</label>
+                <input type="text" id="profile-fullname" name="fullname" value="{{ current_user.fullname }}" autocomplete="name" required>
+                <p class="field-error" data-field-error="fullname"></p>
+            </div>
+            <div class="form-field">
+                <label for="profile-email">Email</label>
+                <input type="email" id="profile-email" name="email" value="{{ current_user.email }}" autocomplete="email" required>
+                <p class="field-error" data-field-error="email"></p>
+            </div>
+            <p class="form-error" data-form-error></p>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Change Password</h3>
+        <form data-password-form novalidate>
+            <div class="form-field">
+                <label for="current-password">Current password</label>
+                <input type="password" id="current-password" name="current_password" autocomplete="current-password" required>
+                <p class="field-error" data-field-error="current_password"></p>
+            </div>
+            <div class="form-field">
+                <label for="new-password">New password</label>
+                <input type="password" id="new-password" name="new_password" autocomplete="new-password" required>
+                <p class="field-error" data-field-error="new_password"></p>
+            </div>
+            <div class="form-field">
+                <label for="confirm-new-password">Confirm new password</label>
+                <input type="password" id="confirm-new-password" name="confirm_new_password" autocomplete="new-password" required>
+                <p class="field-error" data-field-error="confirm_new_password"></p>
+            </div>
+            <p class="form-error" data-form-error></p>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') }}" defer></script>
+{% endblock %}

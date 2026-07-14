@@ -1,0 +1,122 @@
+{% extends "dashboard/base.html" %}
+{% import "_icons.html" as icons %}
+
+{% block title %}Model Analytics{% endblock %}
+{% block page_title %}Model Analytics{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-main__header">
+    <p>How the Gaussian Naive Bayes model performs on the held-out test set ({{ "{:,}".format(metrics.test_set_size) }} samples).</p>
+</div>
+
+<div class="stat-grid">
+    <div class="card stat-card">
+        <div class="stat-card__icon">{{ icons.icon_target() }}</div>
+        <div>
+            <div class="stat-card__value" data-suffix="%" data-stat-counter data-decimals="1" data-value="{{ (analytics_data.accuracy * 100) | round(2) }}">0</div>
+            <div class="stat-card__label">Accuracy</div>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card__icon">{{ icons.icon_filter() }}</div>
+        <div>
+            <div class="stat-card__value" data-suffix="%" data-stat-counter data-decimals="1" data-value="{{ (analytics_data.precision * 100) | round(2) }}">0</div>
+            <div class="stat-card__label">Precision</div>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card__icon">{{ icons.icon_data_scatter() }}</div>
+        <div>
+            <div class="stat-card__value" data-suffix="%" data-stat-counter data-decimals="1" data-value="{{ (analytics_data.recall * 100) | round(2) }}">0</div>
+            <div class="stat-card__label">Recall</div>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card__icon">{{ icons.icon_shield_checkmark() }}</div>
+        <div>
+            <div class="stat-card__value" data-suffix="%" data-stat-counter data-decimals="1" data-value="{{ (analytics_data.f1_score * 100) | round(2) }}">0</div>
+            <div class="stat-card__label">F1 Score</div>
+        </div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card__icon">{{ icons.icon_data_trending() }}</div>
+        <div>
+            <div class="stat-card__value" data-suffix="%" data-stat-counter data-decimals="1" data-value="{{ (analytics_data.auc_roc * 100) | round(2) }}">0</div>
+            <div class="stat-card__label">AUC ROC</div>
+        </div>
+    </div>
+</div>
+
+<div class="chart-grid-2">
+    <div class="card chart-card">
+        <h3>Confusion Matrix</h3>
+        <p class="chart-card__subtitle">{{ "{:,}".format(metrics.test_set_size) }} test samples — {{ "{:,}".format(metrics.support.no_rain) }} No Rain, {{ "{:,}".format(metrics.support.rain) }} Rain.</p>
+        <div class="confusion-matrix">
+            <div class="confusion-matrix__corner"></div>
+            <div class="confusion-matrix__col-label">Predicted No Rain</div>
+            <div class="confusion-matrix__col-label">Predicted Rain</div>
+
+            <div class="confusion-matrix__row-label">Actual No Rain</div>
+            <div class="confusion-matrix__cell confusion-matrix__cell--correct">
+                <span class="confusion-matrix__value">{{ "{:,}".format(analytics_data.confusion_matrix.matrix[0][0]) }}</span>
+                <span class="confusion-matrix__tag">True Negative</span>
+            </div>
+            <div class="confusion-matrix__cell confusion-matrix__cell--wrong">
+                <span class="confusion-matrix__value">{{ "{:,}".format(analytics_data.confusion_matrix.matrix[0][1]) }}</span>
+                <span class="confusion-matrix__tag">False Positive</span>
+            </div>
+
+            <div class="confusion-matrix__row-label">Actual Rain</div>
+            <div class="confusion-matrix__cell confusion-matrix__cell--wrong">
+                <span class="confusion-matrix__value">{{ "{:,}".format(analytics_data.confusion_matrix.matrix[1][0]) }}</span>
+                <span class="confusion-matrix__tag">False Negative</span>
+            </div>
+            <div class="confusion-matrix__cell confusion-matrix__cell--correct">
+                <span class="confusion-matrix__value">{{ "{:,}".format(analytics_data.confusion_matrix.matrix[1][1]) }}</span>
+                <span class="confusion-matrix__tag">True Positive</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card chart-card">
+        <h3>Prediction Outcomes</h3>
+        <p class="chart-card__subtitle">Share of correct vs. incorrect calls across the test set.</p>
+        <div class="chart-canvas-wrap">
+            <canvas id="chart-outcomes-pie"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="chart-grid-2">
+    <div class="card chart-card">
+        <h3>Test Set Class Distribution</h3>
+        <p class="chart-card__subtitle">{{ "{:,}".format(metrics.test_set_size) }} held-out samples split by actual outcome.</p>
+        <div class="chart-canvas-wrap">
+            <canvas id="chart-support-donut"></canvas>
+        </div>
+    </div>
+
+    <div class="card chart-card">
+        <h3>ROC Curve</h3>
+        <p class="chart-card__subtitle">AUC = {{ (analytics_data.auc_roc) | round(4) }} — the closer to the top-left corner, the better.</p>
+        <div class="chart-canvas-wrap">
+            <canvas id="chart-roc"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="card chart-card chart-card--wide">
+    <h3>Mutual Information Feature Ranking</h3>
+    <p class="chart-card__subtitle">All 24 candidate features ranked by Mutual Information score. The top 10 (highlighted) were selected for training.</p>
+    <div class="chart-canvas-wrap chart-canvas-wrap--bar chart-canvas-wrap--tall">
+        <canvas id="chart-mi-full"></canvas>
+    </div>
+</div>
+
+<script id="analytics-data" type="application/json">{{ analytics_data | tojson }}</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard-analytics.js') }}" defer></script>
+{% endblock %}

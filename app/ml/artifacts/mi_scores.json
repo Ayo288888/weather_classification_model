@@ -1,0 +1,122 @@
+[
+  {
+    "feature": "Humidity3pm",
+    "mi_score": 0.382828783990085,
+    "selected": true
+  },
+  {
+    "feature": "MaxTemp",
+    "mi_score": 0.34379768032067304,
+    "selected": true
+  },
+  {
+    "feature": "Temp3pm",
+    "mi_score": 0.3432432139684578,
+    "selected": true
+  },
+  {
+    "feature": "MinTemp",
+    "mi_score": 0.3408281564639464,
+    "selected": true
+  },
+  {
+    "feature": "Temp9am",
+    "mi_score": 0.33480183013255815,
+    "selected": true
+  },
+  {
+    "feature": "Humidity9am",
+    "mi_score": 0.3322270151394775,
+    "selected": true
+  },
+  {
+    "feature": "Pressure9am",
+    "mi_score": 0.3319439685444263,
+    "selected": true
+  },
+  {
+    "feature": "Pressure3pm",
+    "mi_score": 0.32722786553880634,
+    "selected": true
+  },
+  {
+    "feature": "WindGustSpeed",
+    "mi_score": 0.28001264483149124,
+    "selected": true
+  },
+  {
+    "feature": "WindSpeed3pm",
+    "mi_score": 0.27030732602017093,
+    "selected": true
+  },
+  {
+    "feature": "WindSpeed9am",
+    "mi_score": 0.2646735628947543,
+    "selected": false
+  },
+  {
+    "feature": "Sunshine",
+    "mi_score": 0.24497976310520952,
+    "selected": false
+  },
+  {
+    "feature": "Rainfall",
+    "mi_score": 0.2368346574744351,
+    "selected": false
+  },
+  {
+    "feature": "Cloud3pm",
+    "mi_score": 0.23328472217028717,
+    "selected": false
+  },
+  {
+    "feature": "Cloud9am",
+    "mi_score": 0.22437706714988326,
+    "selected": false
+  },
+  {
+    "feature": "Evaporation",
+    "mi_score": 0.2216963545298587,
+    "selected": false
+  },
+  {
+    "feature": "RainToday",
+    "mi_score": 0.037503487371961075,
+    "selected": false
+  },
+  {
+    "feature": "Location",
+    "mi_score": 0.018346146364800475,
+    "selected": false
+  },
+  {
+    "feature": "Month",
+    "mi_score": 0.014414477169827133,
+    "selected": false
+  },
+  {
+    "feature": "WindDir9am",
+    "mi_score": 0.01374116227034361,
+    "selected": false
+  },
+  {
+    "feature": "Year",
+    "mi_score": 0.012733448176696749,
+    "selected": false
+  },
+  {
+    "feature": "WindGustDir",
+    "mi_score": 0.012586823475359221,
+    "selected": false
+  },
+  {
+    "feature": "WindDir3pm",
+    "mi_score": 0.01216959679541918,
+    "selected": false
+  },
+  {
+    "feature": "Day",
+    "mi_score": 0.003334569198667481,
+    "selected": false
+  }
+]
