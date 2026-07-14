@@ -9,3 +9,4 @@ numpy
 joblib
 python-dotenv
 email-validator
+gunicorn
